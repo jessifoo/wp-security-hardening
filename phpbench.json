@@ -1,0 +1,32 @@
+{
+    "bootstrap": "vendor/autoload.php",
+    "path": "tests/Benchmark",
+    "time_unit": "milliseconds",
+    "retry_threshold": 5,
+    "reports": {
+        "performance": {
+            "extends": "aggregate",
+            "break": ["benchmark", "groups"],
+            "cols": [ 
+                "benchmark",
+                "subject",
+                "groups",
+                "params",
+                "revs",
+                "its",
+                "mem_peak",
+                "best",
+                "mean",
+                "worst",
+                "stdev",
+                "rstdev"
+            ]
+        }
+    },
+    "outputs": {
+        "html": {
+            "renderer": "html",
+            "path": "benchmarks.html"
+        }
+    }
+}

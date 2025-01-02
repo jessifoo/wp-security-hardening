@@ -1,0 +1,41 @@
+
+
+# Ignore all files and directories starting with . by default
+.*
+
+# track the .gitignore file, allow access to .bvscode
+!/.gitignore
+!/.vscode
+
+
+
+
+
+
+# Ignore the composer.lock file
+composer.lock
+
+
+
+
+# Ignore the vendor directory
+vendor/
+
+
+#MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+
+
+# Ignore the node_modules directory
+node_modules/
+
+
+
