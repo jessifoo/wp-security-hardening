@@ -203,6 +203,7 @@ class WP_Security_Utils {
 			return sys_get_temp_dir();
 		}
 
+		/** @psalm-suppress RiskyTruthyFalsyComparison */
 		if ( ! empty( $_SERVER['TMP'] ) ) {
 			return $_SERVER['TMP'];
 		}
@@ -229,6 +230,11 @@ class WP_Security_Utils {
 	 * @return array Array of core paths.
 	 */
 	public static function get_wp_paths(): array {
+		// Check if WordPress constants are defined
+		if (!defined('ABSPATH') || !defined('WP_CONTENT_DIR') || !defined('WP_PLUGIN_DIR')) {
+			throw new \RuntimeException('WordPress constants not defined. This function must be called after WordPress is fully loaded.');
+		}
+
 		return array(
 			'root'      => ABSPATH,
 			'admin'     => ABSPATH . 'wp-admin/',

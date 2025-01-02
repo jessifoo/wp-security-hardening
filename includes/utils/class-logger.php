@@ -186,7 +186,7 @@ class Logger {
 	/**
 	 * Clear logs for a component
 	 */
-	public function clear_logs( $component = 'general' ) {
+	public function clear_logs( $component = 'general' ): void {
 		$log_file = $this->get_log_file( $component );
 		if ( file_exists( $log_file ) ) {
 			unlink( $log_file );

@@ -2,11 +2,19 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// Include required admin functionality
+require_once(ABSPATH . 'wp-admin/includes/template.php');
+
 ?>
 <div class="wrap">
 	<h1>WordPress Security Hardening</h1>
 	
-	<?php settings_errors( 'wp_security' ); ?>
+	<?php 
+	if (function_exists('settings_errors')) {
+		settings_errors('wp_security');
+	}
+	?>
 	
 	<div class="card">
 		<h2>Malware Scanner</h2>

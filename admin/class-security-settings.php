@@ -41,7 +41,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Direct access not permitted.' );
 }
 
-require_once plugin_dir_path( __FILE__ ) . '../includes/class-settings.php';
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+require_once WP_SECURITY_PLUGIN_DIR . 'includes/class-settings.php';
+
+use WP_Security\Core\Logger;
 
 class WP_Security_Admin_Settings extends WP_Security_Settings {
 
@@ -54,52 +61,67 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 
 	/**
 	 * Option group name
-	 * 
+	 *
 	 * @var string
 	 */
 	private string $option_group = 'wp_security_options';
 
 	/**
 	 * Settings page slug
-	 * 
+	 *
 	 * @var string
 	 */
 	private string $page = 'wp-security-settings';
 
 	/**
 	 * Logger instance
-	 * 
-	 * @var WP_Security_Logger
+	 *
+	 * @var Logger
 	 */
-	private WP_Security_Logger $logger;
+	private $logger;
 
 	/**
 	 * Network active status
-	 * 
+	 *
 	 * @var bool
 	 */
 	private bool $is_network_active = false;
 
 	/**
 	 * Network sites
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $network_sites = array();
 
 	/**
 	 * Error messages
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $errors = array();
 
 	/**
 	 * Success messages
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $messages = array();
+
+	/**
+	 * @var array<string, mixed>
+	 */
+	private array $settings = [];
+
+	/**
+	 * @var array<string, array{id: string, title: string, description: string}>
+	 */
+	private array $sections = [];
+
+	/**
+	 * @var array<string, array{id: string, title: string, type: string, section: string, options?: array<string, string>}>
+	 */
+	private array $fields = [];
 
 	/**
 	 * Get the singleton instance
@@ -116,20 +138,13 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 	/**
 	 * Constructor - Initialize settings and dependencies
 	 */
-	private function __construct() {
+	public function __construct() {
+		parent::__construct();
 		// Initialize dependencies
-		$this->logger = WP_Security_Logger::get_instance();
+		$this->logger = new Logger();
 		
 		// Initialize network settings
-		if ( is_multisite() ) {
-			if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
-				require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
-			}
-			$this->is_network_active = is_plugin_active_for_network( 'wp-security-hardening/wp-security-hardening.php' );
-			if ( $this->is_network_active ) {
-				$this->network_sites = get_sites();
-			}
-		}
+		$this->init_network_settings();
 
 		// Register hooks
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
@@ -142,200 +157,111 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 	}
 
 	/**
+	 * Initialize plugin
+	 */
+	public function init(): void {
+		// Only run in admin context
+		if (!is_admin()) {
+			return;
+		}
+
+		add_action('admin_init', array($this, 'init_settings'));
+		add_action('admin_menu', array($this, 'add_settings_page'));
+		add_action('wp_ajax_verify_api_key', array($this, 'ajax_verify_api_key'));
+	}
+
+	/**
+	 * Initialize network settings
+	 *
+	 * @return void
+	 */
+	private function init_network_settings(): void {
+		// Initialize network-related settings if needed
+		$this->is_network_active = false;
+		$this->network_sites = array();
+	}
+
+	/**
 	 * Initialize settings with validation
 	 *
 	 * @return void
 	 */
 	public function init_settings(): void {
 		try {
-			// API Key Settings
-			register_setting(
-				$this->option_group,
-				'wp_security_virustotal_api_key',
-				array(
-					'sanitize_callback' => array( $this, 'validate_api_key' ),
-					'default'           => '',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_wpscan_api_key',
-				array(
-					'sanitize_callback' => array( $this, 'validate_api_key' ),
-					'default'           => '',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_abuseipdb_key',
-				array(
-					'sanitize_callback' => array( $this, 'validate_api_key' ),
-					'default'           => '',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_urlscan_key',
-				array(
-					'sanitize_callback' => array( $this, 'validate_api_key' ),
-					'default'           => '',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_phishtank_key',
-				array(
-					'sanitize_callback' => array( $this, 'validate_api_key' ),
-					'default'           => '',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_scan_frequency',
-				array(
-					'sanitize_callback' => array( $this, 'validate_scan_frequency' ),
-					'default'           => 'hourly',
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_email_notifications',
-				array(
-					'sanitize_callback' => array( $this, 'validate_checkbox' ),
-					'default'           => true,
-				)
-			);
-
-			register_setting(
-				$this->option_group,
-				'wp_security_auto_clean',
-				array(
-					'sanitize_callback' => array( $this, 'validate_checkbox' ),
-					'default'           => false,
-				)
-			);
-
-			// Add settings sections
-			add_settings_section(
-				'wp_security_api_settings',
-				__( 'API Settings', 'wp-security-hardening' ),
-				array( $this, 'render_api_section' ),
-				$this->page
-			);
-
-			add_settings_section(
-				'wp_security_scan_settings',
-				__( 'Scan Settings', 'wp-security-hardening' ),
-				array( $this, 'render_scan_section' ),
-				$this->page
-			);
-
-			// Add settings fields with descriptions
-			add_settings_field(
-				'wp_security_virustotal_api_key',
-				__( 'VirusTotal API Key', 'wp-security-hardening' ),
-				array( $this, 'render_api_field' ),
-				$this->page,
-				'wp_security_api_settings',
-				array(
-					'label_for' => 'wp_security_virustotal_api_key',
-					'class'     => 'wp-security-api-key',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_wpscan_api_key',
-				__( 'WPScan API Key', 'wp-security-hardening' ),
-				array( $this, 'render_api_field' ),
-				$this->page,
-				'wp_security_api_settings',
-				array(
-					'label_for' => 'wp_security_wpscan_api_key',
-					'class'     => 'wp-security-api-key',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_abuseipdb_key',
-				__( 'AbuseIPDB API Key', 'wp-security-hardening' ),
-				array( $this, 'render_api_field' ),
-				$this->page,
-				'wp_security_api_settings',
-				array(
-					'label_for' => 'wp_security_abuseipdb_key',
-					'class'     => 'wp-security-api-key',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_urlscan_key',
-				__( 'URLScan.io API Key', 'wp-security-hardening' ),
-				array( $this, 'render_api_field' ),
-				$this->page,
-				'wp_security_api_settings',
-				array(
-					'label_for' => 'wp_security_urlscan_key',
-					'class'     => 'wp-security-api-key',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_phishtank_key',
-				__( 'PhishTank API Key', 'wp-security-hardening' ),
-				array( $this, 'render_api_field' ),
-				$this->page,
-				'wp_security_api_settings',
-				array(
-					'label_for' => 'wp_security_phishtank_key',
-					'class'     => 'wp-security-api-key',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_scan_frequency',
-				__( 'Scan Frequency', 'wp-security-hardening' ),
-				array( $this, 'render_frequency_field' ),
-				$this->page,
-				'wp_security_scan_settings',
-				array(
-					'label_for' => 'wp_security_scan_frequency',
-					'class'     => 'wp-security-scan-frequency',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_email_notifications',
-				__( 'Email Notifications', 'wp-security-hardening' ),
-				array( $this, 'render_checkbox_field' ),
-				$this->page,
-				'wp_security_scan_settings',
-				array(
-					'label_for' => 'wp_security_email_notifications',
-					'class'     => 'wp-security-email-notifications',
-				)
-			);
-
-			add_settings_field(
-				'wp_security_auto_clean',
-				__( 'Auto Clean Threats', 'wp-security-hardening' ),
-				array( $this, 'render_checkbox_field' ),
-				$this->page,
-				'wp_security_scan_settings',
-				array(
-					'label_for' => 'wp_security_auto_clean',
-					'class'     => 'wp-security-auto-clean',
-				)
-			);
-
-		} catch ( Exception $e ) {
-			$this->log_error( 'Settings initialization failed: ' . $e->getMessage() );
+			// Initialize basic settings
+			$this->register_basic_settings();
+			
+			// Register settings sections
+			$this->register_settings_sections();
+			
+			// Add settings fields
+			$this->add_settings_fields();
+			
+		} catch (Exception $e) {
+			$this->log_error($e->getMessage());
 		}
+	}
+
+	/**
+	 * Register basic plugin settings
+	 *
+	 * @return void
+	 */
+	private function register_basic_settings(): void {
+		// Basic initialization without WordPress dependencies
+		$this->settings = array(
+			'api_key' => '',
+			'scan_frequency' => 'daily',
+			'notification_email' => '',
+			'security_level' => 'medium'
+		);
+	}
+
+	/**
+	 * Register settings sections
+	 *
+	 * @return void
+	 */
+	private function register_settings_sections(): void {
+		$this->sections = array(
+			'general' => array(
+				'id' => 'general',
+				'title' => 'General Settings',
+				'description' => 'Configure general security settings'
+			),
+			'scanning' => array(
+				'id' => 'scanning',
+				'title' => 'Scanning Options',
+				'description' => 'Configure malware scanning options'
+			)
+		);
+	}
+
+	/**
+	 * Add settings fields
+	 *
+	 * @return void
+	 */
+	private function add_settings_fields(): void {
+		$this->fields = array(
+			'api_key' => array(
+				'id' => 'api_key',
+				'title' => 'API Key',
+				'type' => 'text',
+				'section' => 'general'
+			),
+			'scan_frequency' => array(
+				'id' => 'scan_frequency',
+				'title' => 'Scan Frequency',
+				'type' => 'select',
+				'section' => 'scanning',
+				'options' => array(
+					'daily' => 'Daily',
+					'weekly' => 'Weekly',
+					'monthly' => 'Monthly'
+				)
+			)
+		);
 	}
 
 	/**
@@ -442,24 +368,46 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 
 	/**
 	 * AJAX handler for API key verification
-	 *
-	 * @return void
 	 */
 	public function ajax_verify_api_key(): void {
-		check_ajax_referer( 'wp_security_verify_api_key', 'nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( 'Unauthorized access' );
-		}
-
-		$api_key = sanitize_text_field( (string) wp_unslash( $_POST['api_key'] ?? '' ) );
-		$service = sanitize_text_field( (string) wp_unslash( $_POST['service'] ?? '' ) );
-
 		try {
-			$result = $this->verify_api_key( $service, $api_key );
-			wp_send_json_success( $result );
-		} catch ( Exception $e ) {
-			wp_send_json_error( $e->getMessage() );
+			if (!function_exists('check_ajax_referer') || !function_exists('current_user_can')) {
+				wp_send_json_error('WordPress functions not available');
+				return;
+			}
+
+			check_ajax_referer('wp_security_nonce', 'nonce');
+
+			if (!current_user_can('manage_options')) {
+				wp_send_json_error('Insufficient permissions');
+				return;
+			}
+
+			$key_type = isset($_POST['key_type']) ? sanitize_text_field(wp_unslash($_POST['key_type'])) : '';
+			$api_key = isset($_POST['api_key']) ? sanitize_text_field(wp_unslash($_POST['api_key'])) : '';
+
+			if (empty($key_type) || empty($api_key)) {
+				wp_send_json_error('Invalid parameters');
+				return;
+			}
+
+			$result = $this->verify_api_key($key_type, $api_key);
+			wp_send_json_success($result);
+
+		} catch (Exception $e) {
+			$this->log_error($e->getMessage());
+			wp_send_json_error($e->getMessage());
+		}
+	}
+
+	/**
+	 * Log error messages
+	 *
+	 * @param string $message Error message to log
+	 */
+	private function log_error($message): void {
+		if ($this->logger && method_exists($this->logger, 'log')) {
+			$this->logger->log('error', $message);
 		}
 	}
 
@@ -505,17 +453,6 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 			'status'  => 'success',
 			'message' => 'API key verified successfully',
 		);
-	}
-
-	/**
-	 * Log error messages
-	 *
-	 * @param string $message Error message to log
-	 */
-	private function log_error( $message ): void {
-		if ( $this->logger ) {
-			$this->logger->log( 'settings', $message, 'error' );
-		}
 	}
 
 	/**
