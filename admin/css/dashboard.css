@@ -1,0 +1,244 @@
+.wp-security-dashboard {
+	max-width: 1200px;
+	margin: 20px auto;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Security Overview */
+.security-overview {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.status-card {
+	background: #fff;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	text-align: center;
+}
+
+.status-indicator {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	margin: 20px auto;
+	position: relative;
+}
+
+.status-good .status-indicator {
+	background: #00a32a;
+	box-shadow: 0 0 20px rgba(0,163,42,0.2);
+}
+
+.status-warning .status-indicator {
+	background: #f0b849;
+	box-shadow: 0 0 20px rgba(240,184,73,0.2);
+}
+
+.status-danger .status-indicator {
+	background: #d63638;
+	box-shadow: 0 0 20px rgba(214,54,56,0.2);
+}
+
+.quick-stats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+
+.stat-card {
+	background: #fff;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	text-align: center;
+}
+
+.stat-number {
+	font-size: 36px;
+	font-weight: bold;
+	color: #1e1e1e;
+	display: block;
+	margin-top: 10px;
+}
+
+/* Action Buttons */
+.security-actions {
+	margin: 30px 0;
+	display: flex;
+	gap: 15px;
+}
+
+.security-actions button {
+	padding: 10px 20px;
+	height: auto;
+	font-size: 14px;
+}
+
+/* Security Sections */
+.security-section {
+	background: #fff;
+	border-radius: 10px;
+	padding: 20px;
+	margin-bottom: 30px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.security-section h2 {
+	margin-top: 0;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+/* Threats List */
+.threats-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.threat-item {
+	border-left: 4px solid transparent;
+	margin-bottom: 15px;
+	padding: 15px;
+	background: #f8f9fa;
+	border-radius: 0 5px 5px 0;
+}
+
+.threat-item.severity-high {
+	border-color: #d63638;
+}
+
+.threat-item.severity-medium {
+	border-color: #f0b849;
+}
+
+.threat-item.severity-low {
+	border-color: #00a32a;
+}
+
+.threat-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.threat-severity {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.threat-time {
+	color: #757575;
+	font-size: 12px;
+}
+
+.threat-details {
+	margin-bottom: 15px;
+}
+
+.threat-file {
+	font-family: monospace;
+	background: #f0f0f1;
+	padding: 5px 10px;
+	border-radius: 3px;
+	margin: 5px 0;
+}
+
+.threat-actions {
+	display: flex;
+	gap: 10px;
+}
+
+/* System Status Grid */
+.status-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 20px;
+}
+
+.status-item {
+	background: #f8f9fa;
+	padding: 15px;
+	border-radius: 5px;
+	border-left: 4px solid transparent;
+}
+
+.status-item.status-good {
+	border-color: #00a32a;
+}
+
+.status-item.status-warning {
+	border-color: #f0b849;
+}
+
+.status-item.status-error {
+	border-color: #d63638;
+}
+
+.status-label {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.status-value {
+	color: #757575;
+}
+
+/* Intelligence Feed */
+.intel-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.intel-item {
+	padding: 15px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.intel-item:last-child {
+	border-bottom: none;
+}
+
+.intel-time {
+	color: #757575;
+	font-size: 12px;
+}
+
+.intel-description {
+	margin: 10px 0;
+}
+
+.intel-source {
+	display: inline-block;
+	background: #f0f0f1;
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+	.security-overview {
+		grid-template-columns: 1fr;
+	}
+
+	.quick-stats {
+		grid-template-columns: 1fr;
+	}
+
+	.security-actions {
+		flex-direction: column;
+	}
+
+	.security-actions button {
+		width: 100%;
+	}
+}

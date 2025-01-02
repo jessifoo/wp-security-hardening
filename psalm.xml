@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="4"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
+>
+    <projectFiles>
+        <directory name="includes"/>
+        <directory name="admin"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+            <directory name="tests"/>
+        </ignoreFiles>
+    </projectFiles>
+    
+    <issueHandlers>
+        <!-- WordPress-specific suppressions -->
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+                <referencedFunction name="add_action"/>
+                <referencedFunction name="add_filter"/>
+                <referencedFunction name="do_action"/>
+                <referencedFunction name="apply_filters"/>
+                <referencedFunction name="wp_enqueue_script"/>
+                <referencedFunction name="wp_enqueue_style"/>
+                <referencedFunction name="wp_localize_script"/>
+                <referencedFunction name="sanitize_text_field"/>
+                <referencedFunction name="esc_html"/>
+                <referencedFunction name="esc_attr"/>
+                <referencedFunction name="esc_url"/>
+                <referencedFunction name="wp_verify_nonce"/>
+            </errorLevel>
+        </UndefinedFunction>
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="WP_Error"/>
+                <referencedClass name="WP_Post"/>
+                <referencedClass name="WP_Query"/>
+            </errorLevel>
+        </UndefinedClass>
+    </issueHandlers>
+    
+    <stubs>
+        <file name="vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"/>
+    </stubs>
+</psalm>

@@ -1,0 +1,33 @@
+{
+    "source": {
+        "directories": [
+            "includes"
+        ],
+        "excludes": [
+            "vendor",
+            "tests"
+        ]
+    },
+    "logs": {
+        "text": "infection.log",
+        "html": "infection.html",
+        "summary": "summary.log",
+        "json": "infection.json",
+        "perMutator": "per-mutator.md"
+    },
+    "mutators": {
+        "@default": true,
+        "@function_signature": false,
+        "MethodCallRemoval": {
+            "ignore": [
+                "WP_Security_Logger::log"
+            ]
+        }
+    },
+    "testFramework": "phpunit",
+    "bootstrap": "./vendor/autoload.php",
+    "initialTestsPhpOptions": "-d xdebug.mode=coverage",
+    "minMsi": 60,
+    "minCoveredMsi": 80,
+    "threads": 4
+}
