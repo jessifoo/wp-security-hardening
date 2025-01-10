@@ -1,0 +1,84 @@
+
+Always check for a README or create one and ensure there is an accurate description of the codebase and what is being built and the direction it is heading in. Add any updates or changes based on work you've done to make sure you know what to do when you look at it again next. It is mainly for you to stay consistent with what has been done and what needs to be done so update this or the README with any needed information. 
+
+Do not change the README without a good reason.
+
+Do not change the code without a good reason.
+
+Do not change the tests without a good reason.
+
+Do not change the documentation without a good reason.
+
+Think step by step and show your thought process and your reasoning. Explain what you are doing and why you are doing it. Do not just write code.
+
+Do not over engineer or change pre-existing functionality without reason. Understand the bigger picture and always tie your work back to the main goal. Do not change the main goal.
+
+Aim for an minimum viable product with each change. Do not write functions that rely on undefined functions. All code must be tested and working.
+
+Think of ther overall plan and goal and then write the code to get there. Ensure that your solution takes into account all the edge cases.
+
+Do not create new files and NEVER assume that the work has not already been started.
+
+Reduce redundancy and reuse code when possible. Do not create new functions or classes just to reuse code. This will make your code more readable and easier to maintain.
+
+
+
+Steps to Fix Your WordPress Security Plugin
+
+1. Define Clear Objectives
+	•	Focus on the plugin’s core purpose:
+	•	Clean obfuscated or malicious files.
+	•	Remove zero-byte files.
+	•	Sanitize database entries with malware.
+	•	Replace corrupted core WordPress and plugin files.
+
+2. Audit the Plugin
+	•	Review All Files: Identify where redundant or unnecessary files are being created.
+	•	Understand Workflow: Map out the current workflow of your plugin step-by-step. Identify where it fails (e.g., creating files without checking first, overcomplicating simple tasks).
+	•	List Features: Write down what works, what doesn’t, and what should be removed or consolidated.
+
+3. Prevent Redundancies
+	•	Ensure the plugin:
+	•	Checks if a file exists before creating or modifying it.
+	•	Verifies if a database entry already exists before inserting or updating.
+	•	Maintain a simple tracking mechanism (e.g., logs or flags) to avoid reprocessing files or database entries unnecessarily.
+
+4. Simplify and Refactor
+	•	Consolidate related tasks into modular functions or sections. For example:
+	•	One function handles scanning and removing malicious files.
+	•	Another function manages database cleanup.
+	•	Avoid creating new files or processes unless absolutely necessary. Use existing WordPress functionality wherever possible.
+
+5. Test Each Feature Incrementally
+	•	Test one feature at a time:
+	•	File scanning: Ensure obfuscated or zero-byte files are correctly detected and removed.
+	•	Database cleaning: Verify that malware entries are identified and removed without affecting legitimate data.
+	•	Core file replacement: Ensure corrupted files are replaced with clean versions.
+
+6. Log All Actions
+	•	Create a logging system that tracks what the plugin does at each step. Include:
+	•	Files processed.
+	•	Files skipped (e.g., already cleaned or valid files).
+	•	Database changes.
+	•	Errors encountered.
+
+7. Document Everything
+	•	Update or create a README file:
+	•	Summarize what the plugin does.
+	•	Include known issues, current progress, and a to-do list for future fixes.
+	•	Add any specific instructions for debugging or troubleshooting.
+
+8. Focus on Minimum Viable Product (MVP)
+	•	Do not overcomplicate. Prioritize getting a basic, working version of the plugin:
+	•	A simple workflow for scanning, cleaning, and logging.
+	•	Avoid adding extra features until the basics are solid.
+
+9. Ensure Stability
+	•	Before finalizing, test in a staging environment with various scenarios (e.g., sites with a lot of files, large databases).
+	•	Look for edge cases where the plugin might fail (e.g., permissions issues, unexpected file types).
+
+10. Monitor and Iterate
+	•	After deployment, monitor the plugin’s logs to identify any recurring issues or inefficiencies.
+	•	Address these issues in small, incremental updates to avoid introducing new problems.
+
+This approach should help you streamline your plugin and get it back on track without overengineering or introducing unnecessary changes. 

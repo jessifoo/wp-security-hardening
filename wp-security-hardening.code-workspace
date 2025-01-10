@@ -6,80 +6,22 @@
 	],
 	"settings": {
 		"intelephense.diagnostics.unusedSymbols": false,
-		"intelephense.environment.documentRoot": "/Users/jessicajohnson/projects/cascade/CascadeProjects/wordpress/wp-content/plugins/wp-security-hardening",
+		"intelephense.environment.documentRoot": "${workspaceFolder}",
 		"intelephense.environment.includePaths": [
-			"/Users/jessicajohnson/projects/cascade/CascadeProjects/wordpress/wp-content/plugins/wp-security-hardening",
-			"/Users/jessicajohnson/projects/cascade/CascadeProjects/wordpress/wp-content/plugins/wp-security-hardening/vendor"
+			"${workspaceFolder}",
+			"${workspaceFolder}/vendor"
 		],
-		"files.autoSave": "afterDelay",
-		"editor.wordWrap": "on",
-		"windsurf.enableModelBasedAutoExecution": true,
-		"editor.autoClosingBrackets": "always",
-		"editor.autoClosingComments": "always",
-		"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
-		"editor.codeActions.triggerOnFocusChange": true,
-		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
-		"editor.experimentalEditContextEnabled": true,
-		"editor.experimentalInlineEdit.enabled": true,
-		"editor.experimentalInlineEdit.showToolbar": "always",
-		"editor.guides.bracketPairs": true,
-		"editor.linkedEditing": true,
-		"editor.tabCompletion": "on",
-		"editor.formatOnPaste": true,
-		"editor.formatOnSave": true,
-		"diffEditor.codeLens": true,
-		"diffEditor.experimental.showMoves": true,
-		"diffEditor.experimental.useTrueInlineView": true,
-		"diffEditor.hideUnchangedRegions.enabled": true,
-		"editor.inlineSuggest.syntaxHighlightingEnabled": true,
-		"editor.quickSuggestions": {
-			"comments": "inline"
-		},
-		"editor.quickSuggestionsDelay": 5,
-		"editor.suggest.localityBonus": true,
-		"editor.suggest.preview": true,
-		"editor.suggest.showStatusBar": true,
-		"files.autoGuessEncoding": true,
-		"files.autoSaveWhenNoErrors": false,
-		"files.defaultLanguage": "php",
-		"files.insertFinalNewline": true,
-		"workbench.auxiliaryActivityBar.location": "bottom",
-		"workbench.commandPalette.preserveInput": true,
-		"workbench.view.alwaysShowHeaderActions": true,
-		"workbench.editor.alwaysShowEditorActions": true,
-		"workbench.editor.closeOnFileDelete": true,
-		"workbench.editor.defaultBinaryEditor": "default",
-		"workbench.editor.highlightModifiedTabs": true,
-		"workbench.editor.limit.enabled": true,
-		"workbench.editor.limit.value": 7,
-		"workbench.editor.preferHistoryBasedLanguageDetection": true,
-		"terminal.integrated.cwd": "/Users/jessicajohnson/projects/cascade/CascadeProjects/wordpress/wp-content/plugins/wp-security-hardening",
-		"terminal.integrated.profiles.osx": {
-
-			"bash": {
-				"path": "bash",
-				"args": [
-					"-l"
-				],
-				"icon": "terminal-bash"
-			},
-			"zsh": {
-				"path": "zsh",
-				"args": [
-					"-l"
-				]
-			},
-			"tmux": {
-				"path": "tmux",
-				"icon": "terminal-tmux"
-			},
-			"pwsh": {
-				"path": "pwsh",
-				"icon": "terminal-powershell"
-			}
-		},
-		"git.scanRepositories": [
-			"/Users/jessicajohnson/projects/cascade/CascadeProjects/wordpress/wp-content/plugins/wp-security-hardening"
-		]
+		"intelephense.files.associations": [
+			"*.php",
+			"*.phtml",
+			"*.inc",
+			"*.module",
+			"*.install",
+			"*.theme"
+		],
+		"intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
+		"intelephense.completion.insertUseDeclaration": true,
+		"intelephense.trace.server": "messages",
+		"intelephense.format.braces": "k&r"
 	}
 }

@@ -54,49 +54,49 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 
 	/**
 	 * Option group name
-	 * 
+	 *
 	 * @var string
 	 */
 	private string $option_group = 'wp_security_options';
 
 	/**
 	 * Settings page slug
-	 * 
+	 *
 	 * @var string
 	 */
 	private string $page = 'wp-security-settings';
 
 	/**
 	 * Logger instance
-	 * 
+	 *
 	 * @var WP_Security_Logger
 	 */
 	private WP_Security_Logger $logger;
 
 	/**
 	 * Network active status
-	 * 
+	 *
 	 * @var bool
 	 */
 	private bool $is_network_active = false;
 
 	/**
 	 * Network sites
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $network_sites = array();
 
 	/**
 	 * Error messages
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $errors = array();
 
 	/**
 	 * Success messages
-	 * 
+	 *
 	 * @var array
 	 */
 	private array $messages = array();
@@ -119,11 +119,11 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 	private function __construct() {
 		// Initialize dependencies
 		$this->logger = WP_Security_Logger::get_instance();
-		
+
 		// Initialize network settings
 		if ( is_multisite() ) {
 			if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
-				require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+				require_once ABSPATH . '/wp-admin/includes/plugin.php';
 			}
 			$this->is_network_active = is_plugin_active_for_network( 'wp-security-hardening/wp-security-hardening.php' );
 			if ( $this->is_network_active ) {
@@ -826,13 +826,13 @@ class WP_Security_Admin_Settings extends WP_Security_Settings {
 		}
 
 		$settings = array();
-		
+
 		switch_to_blog( $site_id );
 		foreach ( $options as $option ) {
-			$settings[$option] = get_option( $option );
+			$settings[ $option ] = get_option( $option );
 		}
 		restore_current_blog();
-		
+
 		return $settings;
 	}
 }
