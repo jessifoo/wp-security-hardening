@@ -230,13 +230,13 @@ class WP_Security_Utils {
 	 */
 	public static function get_wp_paths(): array {
 		return array(
-			'root'      => ABSPATH,
-			'admin'     => ABSPATH . 'wp-admin/',
-			'includes'  => ABSPATH . 'wp-includes/',
-			'content'   => WP_CONTENT_DIR . '/',
-			'plugins'   => WP_PLUGIN_DIR . '/',
-			'themes'    => get_theme_root() . '/',
-			'uploads'   => wp_upload_dir()['basedir'] . '/',
+			'root'     => ABSPATH,
+			'admin'    => ABSPATH . 'wp-admin/',
+			'includes' => ABSPATH . 'wp-includes/',
+			'content'  => WP_CONTENT_DIR . '/',
+			'plugins'  => WP_PLUGIN_DIR . '/',
+			'themes'   => get_theme_root() . '/',
+			'uploads'  => wp_upload_dir()['basedir'] . '/',
 		);
 	}
 
@@ -250,20 +250,22 @@ class WP_Security_Utils {
 		global $wp_version;
 		$locale = get_locale();
 
-		$url = 'https://api.wordpress.org/core/checksums/1.0/?' . http_build_query(array(
-			'version' => $wp_version,
-			'locale'  => $locale,
-		));
+		$url = 'https://api.wordpress.org/core/checksums/1.0/?' . http_build_query(
+			array(
+				'version' => $wp_version,
+				'locale'  => $locale,
+			)
+		);
 
-		$response = wp_remote_get($url);
-		if (is_wp_error($response)) {
+		$response = wp_remote_get( $url );
+		if ( is_wp_error( $response ) ) {
 			return false;
 		}
 
-		$body = wp_remote_retrieve_body($response);
-		$data = json_decode($body, true);
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
 
-		if (!$data || !isset($data['checksums']) || !is_array($data['checksums'])) {
+		if ( ! $data || ! isset( $data['checksums'] ) || ! is_array( $data['checksums'] ) ) {
 			return false;
 		}
 
@@ -277,11 +279,11 @@ class WP_Security_Utils {
 	 * @param string $file Path to file.
 	 * @return string|false File contents or false on failure.
 	 */
-	public static function read_file(string $file): string|false {
-		if (!file_exists($file) || !is_readable($file)) {
+	public static function read_file( string $file ): string|false {
+		if ( ! file_exists( $file ) || ! is_readable( $file ) ) {
 			return false;
 		}
-		return file_get_contents($file);
+		return file_get_contents( $file );
 	}
 
 	/**
@@ -292,19 +294,19 @@ class WP_Security_Utils {
 	 * @param string $content Content to write.
 	 * @return bool True on success, false on failure.
 	 */
-	public static function write_file(string $file, string $content): bool {
-		$dir = dirname($file);
-		if (!file_exists($dir)) {
-			if (!wp_mkdir_p($dir)) {
+	public static function write_file( string $file, string $content ): bool {
+		$dir = dirname( $file );
+		if ( ! file_exists( $dir ) ) {
+			if ( ! wp_mkdir_p( $dir ) ) {
 				return false;
 			}
 		}
 
-		if (file_exists($file) && !is_writable($file)) {
+		if ( file_exists( $file ) && ! is_writable( $file ) ) {
 			return false;
 		}
 
-		return file_put_contents($file, $content) !== false;
+		return file_put_contents( $file, $content ) !== false;
 	}
 
 	/**
@@ -314,18 +316,18 @@ class WP_Security_Utils {
 	 * @param string $dir Directory path.
 	 * @return array Array of file paths.
 	 */
-	public static function get_files_recursive(string $dir): array {
+	public static function get_files_recursive( string $dir ): array {
 		$files = array();
-		
-		if (!is_dir($dir)) {
+
+		if ( ! is_dir( $dir ) ) {
 			return $files;
 		}
 
-		$dir_iterator = new \RecursiveDirectoryIterator($dir);
-		$iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
+		$dir_iterator = new \RecursiveDirectoryIterator( $dir );
+		$iterator     = new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::SELF_FIRST );
 
-		foreach ($iterator as $file) {
-			if ($file->isFile()) {
+		foreach ( $iterator as $file ) {
+			if ( $file->isFile() ) {
 				$files[] = $file->getPathname();
 			}
 		}

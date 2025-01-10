@@ -7,13 +7,16 @@ class WP_Security_Plugin_Repair {
 	private $quarantine;
 	private $logger;
 	private $last_check_option = 'wp_security_plugin_last_check';
+	private $scanner;
 
 	public function __construct() {
 		require_once __DIR__ . '/class-quarantine-manager.php';
 		require_once __DIR__ . '/class-logger.php';
+		require_once __DIR__ . '/class-scanner.php';
 
 		$this->quarantine = new WP_Security_Quarantine_Manager();
 		$this->logger     = new WP_Security_Logger();
+		$this->scanner    = new WP_Security_Scanner();
 
 		// Check plugins every 6 hours
 		add_action( 'wp_security_plugin_check', array( $this, 'check_plugins' ) );
@@ -61,7 +64,7 @@ class WP_Security_Plugin_Repair {
 		}
 
 		// Check file integrity
-		$this->verify_plugin_files( $plugin_file, $plugin_data );
+		$this->check_plugin_files( $plugin_file );
 	}
 
 	private function get_plugin_info( $slug ) {
@@ -135,19 +138,15 @@ class WP_Security_Plugin_Repair {
 		return false;
 	}
 
-	private function verify_plugin_files( $plugin_file, $plugin_data ) {
-		$plugin_path  = WP_PLUGIN_DIR . '/' . dirname( $plugin_file );
-		$plugin_files = $this->get_plugin_files( $plugin_path );
+	private function check_plugin_files( $plugin_file ) {
+		$plugin_dir = WP_PLUGIN_DIR . '/' . dirname( $plugin_file );
+		$files      = $this->get_plugin_files( $plugin_dir );
 
-		foreach ( $plugin_files as $file ) {
-			if ( $this->is_suspicious_file( $file ) ) {
-				$this->quarantine->quarantine_file( $file );
-				unlink( $file );
-				$this->logger->log( 'plugin_security', "Removed suspicious file: {$file}" );
-				continue;
-			}
+		foreach ( $files as $file ) {
+			// Use the consolidated scanner instead of duplicate checks
+			$scan_results = $this->scanner->scan_file( $file );
 
-			if ( $this->contains_malicious_code( $file ) ) {
+			if ( ! empty( $scan_results ) ) {
 				$this->quarantine->quarantine_file( $file );
 				$this->restore_plugin_file( $plugin_file, $file );
 				$this->logger->log( 'plugin_security', "Restored compromised file: {$file}" );

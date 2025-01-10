@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Install PHP dependencies
+composer install
+
+# Install PHP CodeSniffer with WordPress standards
+composer require --dev wp-coding-standards/wpcs
+composer require --dev dealerdirect/phpcodesniffer-composer-installer
+
+# Set up PHPCS
+./vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
+./vendor/bin/phpcs --config-set default_standard WordPress
+
+# Install other development tools
+composer require --dev phpunit/phpunit
+composer require --dev vimeo/psalm
+composer require --dev phpmd/phpmd
+
 # Function to check if containers are running
 check_containers() {
     if docker-compose ps | grep -q "wordpress"; then
@@ -13,11 +29,11 @@ check_containers() {
 start_containers() {
     echo "Starting WordPress environment..."
     docker-compose up -d
-    
+
     # Wait for containers to be ready
     echo "Waiting for containers to be ready..."
     sleep 10
-    
+
     # Check if WordPress is accessible
     while ! curl -s http://localhost:8080 > /dev/null; do
         echo "Waiting for WordPress to be accessible..."

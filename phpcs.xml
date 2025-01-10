@@ -1,41 +1,20 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Security Plugin">
-    <description>PHPCS configuration for WordPress Security Hardening Plugin</description>
+    <description>WordPress Coding Standards for Security Plugin</description>
 
-    <!-- What to scan -->
     <file>.</file>
-    <exclude-pattern>/vendor/</exclude-pattern>
-    <exclude-pattern>/node_modules/</exclude-pattern>
-    <exclude-pattern>/tests/</exclude-pattern>
-    <exclude-pattern>*.js</exclude-pattern>
-    <exclude-pattern>*.css</exclude-pattern>
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/node_modules/*</exclude-pattern>
+    <exclude-pattern>/tests/*</exclude-pattern>
 
-    <!-- How to scan -->
-    <arg value="sp"/> <!-- Show sniff and progress -->
-    <arg name="colors"/>
     <arg name="extensions" value="php"/>
-    <arg name="parallel" value="8"/>
-    <arg name="basepath" value="."/>
-    <arg name="tab-width" value="4"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
 
-    <!-- Rules: WordPress Coding Standards -->
-    <config name="minimum_supported_wp_version" value="6.0"/>
-    <config name="testVersion" value="8.2-"/>
-    
-    <!-- Include WordPress Rules -->
-    <rule ref="WordPress"/>
-
-    <!-- Text domain -->
-    <rule ref="WordPress.WP.I18n">
-        <properties>
-            <property name="text_domain" type="array">
-                <element value="wp-security-hardening"/>
-            </property>
-        </properties>
+    <rule ref="WordPress">
+        <!-- Add exclusions if needed -->
     </rule>
 
-    <!-- Paths to check -->
-    <file>./includes/</file>
-    <file>./admin/</file>
-    <file>wp-security-hardening.php</file>
+    <config name="minimum_supported_wp_version" value="5.8"/>
+    <config name="testVersion" value="8.2-"/>
 </ruleset>

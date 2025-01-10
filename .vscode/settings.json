@@ -3,5 +3,55 @@
         "connectionId": "jessifoo",
         "projectKey": "jessifoo_rayzgyproc"
     },
-    "editor.unusualLineTerminators": "auto"
+    "editor.unusualLineTerminators": "auto",
+    "phpcs.enable": true,
+    "phpcs.standard": "./phpcs.xml.dist",
+    "php.suggest.basic": false,
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+        "editor.formatOnSave": true
+    },
+    "intelephense.format.braces": "k&r",
+    "intelephense.format.enable": true,
+    "intelephense.format.spacing": {
+        "beforeParentheses": {
+            "controlStructure": true,
+            "functionDeclaration": false,
+            "functionCall": false
+        }
+    },
+    "intelephense.stubs": [
+        "apache",
+        "wordpress",
+        "wordpress-globals",
+        "wp-cli"
+    ],
+    "intelephense.format.rules": {
+        "arrayPadding": true,
+        "spacesWithinTypeHintParentheses": false,
+        "spacesWithinMethodDeclarationParentheses": false,
+        "spacesWithinFunctionDeclarationParentheses": false,
+        "spacesWithinParentheses": false
+    },
+    "intelephense.completion.triggerParameterHints": true,
+    "intelephense.completion.insertUseDeclaration": true,
+    "intelephense.trace.server": "messages",
+    "intelephense.files.exclude": [
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.hg/**",
+        "**/CVS/**",
+        "**/.DS_Store/**",
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/vendor/**/{Tests,tests}/**",
+        "**/.history/**",
+        "**/vendor/**/vendor/**"
+    ]
 }
