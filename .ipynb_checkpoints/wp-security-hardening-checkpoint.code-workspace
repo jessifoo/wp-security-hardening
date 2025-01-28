@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"intelephense.diagnostics.unusedSymbols": false,
+		"intelephense.environment.documentRoot": "${workspaceFolder}",
+		"intelephense.environment.includePaths": [
+			"${workspaceFolder}",
+			"${workspaceFolder}/vendor"
+		],
+		"intelephense.files.associations": [
+			"*.php",
+			"*.phtml",
+			"*.inc",
+			"*.module",
+			"*.install",
+			"*.theme"
+		],
+		"intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
+		"intelephense.completion.insertUseDeclaration": true,
+		"intelephense.trace.server": "messages",
+		"intelephense.format.braces": "k&r"
+	}
+}
